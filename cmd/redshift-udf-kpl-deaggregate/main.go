@@ -10,6 +10,8 @@ import (
 	redshiftudfkpldeaggregate "github.com/mashiike/redshift-udf-kpl-deaggregate"
 )
 
+var Version = "current"
+
 func main() {
 	logLevel := os.Getenv("LOG_LEVEL")
 	if logLevel == "" {
@@ -23,7 +25,7 @@ func main() {
 	log.SetOutput(filter)
 	mux := gravita.NewMux()
 	mux.HandleRowFunc("*", redshiftudfkpldeaggregate.RowHandlerFunc)
-	log.Println("[info] start lambda handler")
+	log.Println("[info] start lambda handler (version:", Version, ")")
 	lambda.Start(mux.HandleLambdaEvent)
 	log.Println("[info] end lambda handler")
 }
