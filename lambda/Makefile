@@ -9,7 +9,6 @@ clean:
 
 lambroll/deploy: bootstrap
 	lambroll --log-level debug deploy
-	$(MAKE) lambroll/logs
 
 lambroll/logs:
 	lambroll logs --follow --format=short
