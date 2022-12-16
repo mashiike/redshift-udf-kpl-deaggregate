@@ -7,7 +7,7 @@ require (
 	github.com/fujiwara/kinesis-tailf v0.3.2
 	github.com/hashicorp/logutils v1.0.0
 	github.com/mashiike/gravita v0.1.0
-	github.com/samber/lo v1.36.0
+	github.com/samber/lo v1.37.0
 	github.com/stretchr/testify v1.8.1
 )
 
