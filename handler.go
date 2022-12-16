@@ -8,6 +8,7 @@ import (
 	"log"
 
 	"github.com/fujiwara/kinesis-tailf/kpl"
+	"github.com/mashiike/gravita"
 )
 
 func RowHandlerFunc(ctx context.Context, args []interface{}) (interface{}, error) {
@@ -23,12 +24,14 @@ func RowHandlerFunc(ctx context.Context, args []interface{}) (interface{}, error
 }
 
 func rowHandlerFunc(ctx context.Context, args []interface{}) ([]json.RawMessage, error) {
+	meta := gravita.Metadata(ctx)
+	log.Printf("[debug] call %s from database=%s query_id=%d", meta.ExternalFunction, meta.Database, meta.QueryID)
 	if len(args) != 1 {
-		return nil, fmt.Errorf("udf_kpl_deaggregate takes 1 argument: %d arguments are received", len(args))
+		return nil, fmt.Errorf("%s takes 1 argument: %d arguments are received", meta.ExternalFunction, len(args))
 	}
 	hexStr, ok := args[0].(string)
 	if !ok {
-		return nil, fmt.Errorf("1st argument of udf_kpl_deaggregate must be interpreted as a hex string: got %T", args[0])
+		return nil, fmt.Errorf("1st argument of %s must be interpreted as a hex string: got %T", meta.ExternalFunction, args[0])
 	}
 	log.Printf("[debug] udf_kpl_deaggregate(%s)", hexStr)
 	records := make([]json.RawMessage, 0)
