@@ -2,8 +2,8 @@ package redshiftudfkpldeaggregate
 
 import (
 	"context"
+	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 
@@ -11,22 +11,43 @@ import (
 )
 
 func RowHandlerFunc(ctx context.Context, args []interface{}) (interface{}, error) {
+	records, err := rowHandlerFunc(ctx, args)
+	for err != nil {
+		return nil, err
+	}
+	bs, err := json.Marshal(records)
+	if err != nil {
+		return nil, err
+	}
+	return string(bs), nil
+}
+
+func rowHandlerFunc(ctx context.Context, args []interface{}) ([]json.RawMessage, error) {
 	if len(args) != 1 {
-		return nil, fmt.Errorf("udf_kpl_deaggregate takes 1 argument: %d arguments are received. ", len(args))
+		return nil, fmt.Errorf("udf_kpl_deaggregate takes 1 argument: %d arguments are received.", len(args))
 	}
-	bs, ok := args[0].([]byte)
+	hexStr, ok := args[0].(string)
 	if !ok {
-		return nil, errors.New("the first argument of udf_kpl_deaggregate must be interpreted as a byte")
+		return nil, fmt.Errorf("1st argument of udf_kpl_deaggregate must be interpreted as a hex string: got %T", args[0])
 	}
-	log.Printf("[debug] udf_kpl_deaggregate([]byte{%x})", bs)
+	log.Printf("[debug] udf_kpl_deaggregate(%s)", hexStr)
 	records := make([]json.RawMessage, 0)
+	bs, err := hex.DecodeString(hexStr)
+	if err != nil {
+		log.Printf("[debug] argument is not hex string: %v", err)
+		records = append(records, convertJSON([]byte(hexStr)))
+		return records, nil
+	}
+	log.Println("[debug] success decode hex string")
 	ar, err := kpl.Unmarshal(bs)
 	if err != nil {
 		log.Printf("[debug] can not unmarshal KPL: %v", err)
 		records = append(records, convertJSON(bs))
 		return records, nil
 	}
-	for _, r := range ar.Records {
+	log.Println("[debug] success KPL deaggregate")
+	for i, r := range ar.Records {
+		log.Printf("[debug] aggregated recode %d: %x", i, r.Data)
 		records = append(records, convertJSON(r.Data))
 	}
 	return records, nil
