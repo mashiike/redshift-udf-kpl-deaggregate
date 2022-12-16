@@ -65,7 +65,7 @@ func TestRowHandlerFunc(t *testing.T) {
 		{
 			casename: "invalid argument, 0 args",
 			input:    []interface{}{},
-			errStr:   "udf_kpl_deaggregate takes 1 argument: 0 arguments are received.",
+			errStr:   "udf_kpl_deaggregate takes 1 argument: 0 arguments are received",
 		},
 		{
 			casename: "invalid argument, not string",

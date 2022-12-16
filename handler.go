@@ -22,16 +22,26 @@ func RowHandlerFunc(ctx context.Context, args []interface{}) (interface{}, error
 	}
 	return string(bs), nil
 }
+func coalesce[T comparable](ts ...T) T {
+	var empty T
+	for _, t := range ts {
+		if t != empty {
+			return t
+		}
+	}
+	return empty
+}
 
 func rowHandlerFunc(ctx context.Context, args []interface{}) ([]json.RawMessage, error) {
 	meta := gravita.Metadata(ctx)
-	log.Printf("[debug] call %s from database=%s query_id=%d", meta.ExternalFunction, meta.Database, meta.QueryID)
+	udfName := coalesce(meta.ExternalFunction, "udf_kpl_deaggregate")
+	log.Printf("[debug] call %s from database=%s query_id=%d", udfName, meta.Database, meta.QueryID)
 	if len(args) != 1 {
-		return nil, fmt.Errorf("%s takes 1 argument: %d arguments are received", meta.ExternalFunction, len(args))
+		return nil, fmt.Errorf("%s takes 1 argument: %d arguments are received", udfName, len(args))
 	}
 	hexStr, ok := args[0].(string)
 	if !ok {
-		return nil, fmt.Errorf("1st argument of %s must be interpreted as a hex string: got %T", meta.ExternalFunction, args[0])
+		return nil, fmt.Errorf("1st argument of %s must be interpreted as a hex string: got %T", udfName, args[0])
 	}
 	log.Printf("[debug] udf_kpl_deaggregate(%s)", hexStr)
 	records := make([]json.RawMessage, 0)
