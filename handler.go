@@ -24,7 +24,7 @@ func RowHandlerFunc(ctx context.Context, args []interface{}) (interface{}, error
 
 func rowHandlerFunc(ctx context.Context, args []interface{}) ([]json.RawMessage, error) {
 	if len(args) != 1 {
-		return nil, fmt.Errorf("udf_kpl_deaggregate takes 1 argument: %d arguments are received.", len(args))
+		return nil, fmt.Errorf("udf_kpl_deaggregate takes 1 argument: %d arguments are received", len(args))
 	}
 	hexStr, ok := args[0].(string)
 	if !ok {
