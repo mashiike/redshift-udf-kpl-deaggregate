@@ -22,7 +22,7 @@ The example of lambda directory uses [lambroll](https://github.com/fujiwara/lamb
 ### Create Redshift UDF
 
 ```sql
-CREATE OR REPLACE EXTERNAL FUNCTION udf_kpl_deaggregate(varbyte(max))
+CREATE OR REPLACE EXTERNAL FUNCTION udf_kpl_deaggregate(varchar(max))
 RETURNS varchar(max)
 IMMUTABLE
 LAMBDA 'redshift-udf-kpl-deaggregate'
@@ -43,14 +43,20 @@ IAM_ROLE default ;
 CREATE MATERIALIZED VIEW my_view AS
 SELECT 
     approximate_arrival_timestamp,
-    JSON_PARSE(kinesis_data) as kinesis__data
-FROM (
-    SELECT 
-        approximate_arrival_timestamp,
-        udf_kpl_deaggregate(kinesis_data) as kinesis_data
-    FROM kinesis.my_stream_name
-)
-WHERE is_utf8(kinesis_data) AND is_valid_json(kinesis_data);
+    partition_key,
+    shard_id,
+    sequence_number,
+    JSON_PARSE(udf_kpl_deaggregate(from_varbyte(kinesis_data,'hex'))) as kinesis_data,
+    refresh_time
+FROM kinesis.my_stream_name
+WHERE is_valid_json_array(udf_kpl_deaggregate(from_varbyte(kinesis_data,'hex')));
+```
+
+```sql
+REFRESH MATERIALIZED VIEW my_view;
+SELECT approximate_arrival_timestamp,partition_key,shard_id,sequence_number,refresh_time, data
+from my_view as record, record.kinesis_data as data
+order by approximate_arrival_timestamp desc, sequence_number desc
 ```
 
 ## LICENSE
