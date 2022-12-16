@@ -1,4 +1,9 @@
 # redshift-udf-kpl-deaggregate
+
+![Latest GitHub release](https://img.shields.io/github/release/mashiike/redshift-udf-kpl-deaggregate.svg)
+![Github Actions test](https://github.com/mashiike/redshift-udf-kpl-deaggregate/workflows/Test/badge.svg?branch=main)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mashiike/redshift-udf-kpl-deaggregate/blob/master/LICENSE)
+
 Lambda UDF to de-aggregate KPL for Redshift
 
 ## Usage 
@@ -6,7 +11,7 @@ Lambda UDF to de-aggregate KPL for Redshift
 
 ### Deploy Lambda Function
 
-Download binary from [Releases](https://github.com/mashiike/prepalert/releases).
+Download binary from [Releases](https://github.com/mashiike/redshift-udf-kpl-deaggregate/releases).
 Then create a zip archive like the following and deploy it. (runtime `provided.al2`)
 
 ```
