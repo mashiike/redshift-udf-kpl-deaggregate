@@ -2,7 +2,7 @@
   "Description": "Example of redshift-udf-kpl-deaggregate",
   "Environment": {
       "Variables": {
-          "LOG_LEVEL": "{{ env `LOG_LEVEL` `info`}}"
+          "LOG_LEVEL": "{{ env `LOG_LEVEL` `debug`}}"
       }
   },
   "FunctionName": "redshift-udf-kpl-deaggregate",
