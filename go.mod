@@ -3,7 +3,7 @@ module github.com/mashiike/redshift-udf-kpl-deaggregate
 go 1.19
 
 require (
-	github.com/aws/aws-lambda-go v1.36.0
+	github.com/aws/aws-lambda-go v1.36.1
 	github.com/fujiwara/kinesis-tailf v0.3.2
 	github.com/hashicorp/logutils v1.0.0
 	github.com/mashiike/gravita v0.1.0
